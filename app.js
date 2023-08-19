@@ -26,4 +26,7 @@ app.use("/api", discountRoutes);
 const promotionRoutes = require("./routes/promotionRoutes");
 app.use("/api", promotionRoutes);
 
+const packageRoutes = require("./routes/packageRoutes");
+app.use("/api", packageRoutes);
+
 module.exports = app;
