@@ -14,8 +14,9 @@ const getRates = async (req, res) => {
 const getRateIdByName = async (req, res) => {
   const rateName = req.params.name;
   try {
-    const idData = await rateService.getRateIdByName(rateName);
-    res.json(idData);
+    const data = await rateService.getRateIdByName(rateName);
+    const rateId = data[0].id;
+    res.json(rateId);
   } catch {
     res.status(500).json({
       error: "Erreur lors de la récupération de l'id du tarif",
