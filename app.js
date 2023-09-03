@@ -29,4 +29,7 @@ app.use("/api", promotionRoutes);
 const packageRoutes = require("./routes/packageRoutes");
 app.use("/api", packageRoutes);
 
+const articleRoutes = require("./routes/articleRoutes");
+app.use("/api", articleRoutes);
+
 module.exports = app;
