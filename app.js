@@ -2,14 +2,23 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 require("dotenv").config();
-
-const db = require("./db/dbConfig");
+const path = require("path");
 
 const app = express();
 
 app.use(cors());
 
 app.use(bodyParser.json());
+
+app.use(express.static(path.join(__dirname, "../Esthetik-front/build")));
+
+const pathsToRedirect = ["/prestations", "/prestations/*", "/actu", "/actu/*"];
+
+pathsToRedirect.forEach((pathToRedirect) => {
+  app.get(pathToRedirect, function (req, res) {
+    res.sendFile(path.join(__dirname, "../Esthetik-front/build", "index.html"));
+  });
+});
 
 const rateRoutes = require("./routes/rateRoutes");
 app.use("/api", rateRoutes);
