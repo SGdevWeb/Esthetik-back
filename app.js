@@ -41,4 +41,7 @@ app.use("/api", packageRoutes);
 const articleRoutes = require("./routes/articleRoutes");
 app.use("/api", articleRoutes);
 
+const adminRoutes = require("./routes/adminRoutes");
+app.use("/api", adminRoutes);
+
 module.exports = app;
