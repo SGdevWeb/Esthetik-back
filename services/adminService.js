@@ -8,7 +8,8 @@ const getAdministratorByUsername = (username) => {
       if (error) {
         reject(error);
       } else {
-        resolve(results);
+        const result = results[0];
+        resolve(result);
       }
     });
   });

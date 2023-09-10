@@ -19,6 +19,21 @@ const getLocations = () => {
   });
 };
 
+const createLocation = (newLocation) => {
+  const query = "INSERT INTO location (name) VALUES (?)";
+  console.log(newLocation);
+  return new Promise((resolve, reject) => {
+    db.query(query, [newLocation], (error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
 module.exports = {
   getLocations,
+  createLocation,
 };
