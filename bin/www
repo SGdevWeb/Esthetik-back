@@ -1,0 +1,29 @@
+const fs = require("fs");
+const path = require("path");
+const https = require("https");
+const http = require("http");
+const app = require("../app");
+
+http
+  .createServer((req, res) => {
+    res.writeHead(301, { location: `https://${req.headers.host}${req.url}` });
+    res.end();
+  })
+  .listen(80);
+
+const options = {
+  cert: fs.readFileSync(
+    "/etc/letsencrypt/live/www.xn--clatdebeaut-99al.fr/fullchain.pem"
+  ),
+  key: fs.readFileSync(
+    "/etc/letsencrypt/live/www.xn--clatdebeaut-99al.fr/privkey.pem"
+  ),
+};
+
+const server = https.createServer(options, app);
+
+server.on("listening", () => {
+  console.log("Server started listening");
+});
+
+server.listen(443);
