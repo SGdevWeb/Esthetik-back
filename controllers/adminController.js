@@ -7,10 +7,9 @@ const signIn = async (req, res) => {
   const { username, password } = req.body;
   const authDTO = new AuthDTO(username, password);
   try {
-    const admins = await adminService.getAdministratorByUsername(
+    const admin = await adminService.getAdministratorByUsername(
       authDTO.username
     );
-    const admin = admins[0];
     if (!admin) {
       return res
         .status(401)

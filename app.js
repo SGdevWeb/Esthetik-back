@@ -51,4 +51,7 @@ app.use("/api", articleRoutes);
 const adminRoutes = require("./routes/adminRoutes");
 app.use("/api", adminRoutes);
 
+const googleAnalyticsRoutes = require("./routes/googleAnalyticsRoutes");
+app.use("/api", googleAnalyticsRoutes);
+
 module.exports = app;
