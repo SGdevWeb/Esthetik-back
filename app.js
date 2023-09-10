@@ -12,7 +12,14 @@ app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, "../Esthetik-front/build")));
 
-const pathsToRedirect = ["/prestations", "/prestations/*", "/actu", "/actu/*"];
+const pathsToRedirect = [
+  "/prestations",
+  "/prestations/*",
+  "/actu",
+  "/actu/*",
+  "/admin",
+  "/admin/*",
+];
 
 pathsToRedirect.forEach((pathToRedirect) => {
   app.get(pathToRedirect, function (req, res) {
