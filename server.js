@@ -1,3 +1,5 @@
+process.env.TZ = "UTC";
+
 const http = require("http");
 const app = require("./app");
 require("dotenv").config();

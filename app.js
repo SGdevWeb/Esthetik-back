@@ -19,6 +19,7 @@ const pathsToRedirect = [
   "/actu/*",
   "/admin",
   "/admin/*",
+  "/rdv",
 ];
 
 pathsToRedirect.forEach((pathToRedirect) => {
@@ -53,5 +54,8 @@ app.use("/api", adminRoutes);
 
 const googleAnalyticsRoutes = require("./routes/googleAnalyticsRoutes");
 app.use("/api", googleAnalyticsRoutes);
+
+const slotRoutes = require("./routes/slotRoutes");
+app.use("/api", slotRoutes);
 
 module.exports = app;
