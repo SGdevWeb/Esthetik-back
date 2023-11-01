@@ -58,4 +58,7 @@ app.use("/api", googleAnalyticsRoutes);
 const slotRoutes = require("./routes/slotRoutes");
 app.use("/api", slotRoutes);
 
+const appointmentRoutes = require("./routes/appointmentRoutes");
+app.use("/api", appointmentRoutes);
+
 module.exports = app;

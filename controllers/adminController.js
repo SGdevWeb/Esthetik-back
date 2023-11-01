@@ -22,13 +22,12 @@ const signIn = async (req, res) => {
         .json({ message: "Paire username/mot de passe incorrect" });
     }
     const payload = {
-      expiresIn: "24h",
       sub: {
         AdminId: admin.id,
         username: admin.username,
       },
     };
-    const token = jwt.sign(payload, process.env.JWT_KEY);
+    const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: "1h" });
     res.status(200).json({ adminId: admin.id, token: token });
   } catch (error) {
     res.status(500).json({ error: "Erreur lors de l'authentification" });

@@ -46,8 +46,27 @@ const getServicesWithRates = () => {
   });
 };
 
+const getServiceById = (serviceId) => {
+  const query = "SELECT * FROM service WHERE id = ?";
+
+  return new Promise((resolve, reject) => {
+    db.query(query, [serviceId], (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        if (results.length === 0) {
+          resolve(null);
+        } else {
+          resolve(results[0]);
+        }
+      }
+    });
+  });
+};
+
 module.exports = {
   getServicesWithRates,
   getServices,
   getServicesByRate,
+  getServiceById,
 };
