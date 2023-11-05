@@ -9,8 +9,10 @@ const getLocations = () => {
         reject(error);
       } else {
         const resultsLowercase = results.map((location) => {
+          const { name, ...other } = location;
           return {
-            name: location.name.toLowerCase(),
+            ...other,
+            name: name.toLowerCase(),
           };
         });
         resolve(resultsLowercase);
@@ -27,7 +29,15 @@ const createLocation = (newLocation) => {
       if (error) {
         reject(error);
       } else {
-        resolve(result);
+        const insertedId = result.insertId;
+        const findQuery = "SELECT * FROM location WHERE id = ?";
+        db.query(findQuery, [insertedId], (findError, findResult) => {
+          if (findError) {
+            reject(findError);
+          } else {
+            resolve(findResult[0]);
+          }
+        });
       }
     });
   });
