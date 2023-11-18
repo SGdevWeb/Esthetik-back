@@ -1,7 +1,7 @@
 const db = require("../db/dbConfig");
 
 const getLocations = () => {
-  const query = "SELECT * FROM location";
+  const query = "SELECT * FROM location ORDER BY name";
 
   return new Promise((resolve, reject) => {
     db.query(query, (error, results) => {

@@ -57,7 +57,37 @@ const getAvailableSlots = () => {
   });
 };
 
-const addSlots = async (slots) => {
+const getSlotsWithDetails = () => {
+  const query = `
+  SELECT  slot.*, 
+          appointment.firstname, 
+          appointment.lastname, 
+          appointment.email, 
+          service.title, 
+          service.price,
+          rate.name AS type_de_prestation
+  FROM slot 
+  LEFT JOIN appointment ON slot.appointment_id = appointment.id 
+  LEFT JOIN appointment_service ON appointment.id = appointment_service.appointment_id 
+  LEFT JOIN service ON appointment_service.service_id = service.id
+  LEFT JOIN rate ON service.rate_id = rate.id;
+`;
+
+  return new Promise((resolve, reject) => {
+    db.query(query, (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        results.forEach((row) => {
+          row.date = row.date.toISOString().split("T")[0];
+        });
+        resolve(results);
+      }
+    });
+  });
+};
+
+const addSlots = (slots) => {
   const query = "INSERT INTO slot (date, start_time, end_time) VALUES ?";
 
   const decomposeSlot = (slot) => {
@@ -114,7 +144,7 @@ const updateSlotToBooked = (slotId) => {
   });
 };
 
-const updateSlotWithAppointmentId = async (slotId, appointmentId) => {
+const updateSlotWithAppointmentId = (slotId, appointmentId) => {
   const query = "UPDATE slot SET appointment_id = ? WHERE id = ?";
 
   return new Promise((resolve, reject) => {
@@ -128,11 +158,46 @@ const updateSlotWithAppointmentId = async (slotId, appointmentId) => {
   });
 };
 
+const deleteSlotById = (slotId) => {
+  const query = "DELETE FROM slot WHERE id = ?";
+
+  return new Promise((resolve, reject) => {
+    db.query(query, [slotId], (error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result.affectedRows);
+      }
+    });
+  });
+};
+
+const updateSlotById = (slotId, updatedSlot) => {
+  const query = "UPDATE slot SET start_time = ?, end_time = ? WHERE id = ?";
+
+  return new Promise((resolve, reject) => {
+    db.query(
+      query,
+      [updatedSlot.start_time, updatedSlot.end_time, slotId],
+      (error, result) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result.affectedRows);
+        }
+      }
+    );
+  });
+};
+
 module.exports = {
   getSlots,
   addSlots,
   getSlotById,
+  getSlotsWithDetails,
   updateSlotToBooked,
   getAvailableSlots,
   updateSlotWithAppointmentId,
+  deleteSlotById,
+  updateSlotById,
 };
