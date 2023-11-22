@@ -23,7 +23,6 @@ const getLocations = () => {
 
 const createLocation = (newLocation) => {
   const query = "INSERT INTO location (name) VALUES (?)";
-  console.log(newLocation);
   return new Promise((resolve, reject) => {
     db.query(query, [newLocation], (error, result) => {
       if (error) {
@@ -43,7 +42,37 @@ const createLocation = (newLocation) => {
   });
 };
 
+const deleteLocationById = (locationId) => {
+  const query = "DELETE FROM location WHERE id = ?";
+
+  return new Promise((resolve, reject) => {
+    db.query(query, [locationId], (error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result.affectedRows);
+      }
+    });
+  });
+};
+
+const updateLocationById = (locationId, updatedLocation) => {
+  const query = "UPDATE location SET name = ? WHERE id = ?";
+
+  return new Promise((resolve, reject) => {
+    db.query(query, [updatedLocation.name, locationId], (error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result.affectedRows);
+      }
+    });
+  });
+};
+
 module.exports = {
   getLocations,
   createLocation,
+  deleteLocationById,
+  updateLocationById,
 };
