@@ -59,10 +59,12 @@ const getAvailableSlots = () => {
 
 const getSlotsWithDetails = () => {
   const query = `
-  SELECT  slot.*, 
+  SELECT  slot.*,
           appointment.firstname, 
           appointment.lastname, 
-          appointment.email, 
+          appointment.email,
+          appointment.is_confirmed, 
+          service.id AS service_id,
           service.title, 
           service.price,
           rate.name AS type_de_prestation

@@ -91,21 +91,22 @@ const getAppointmentsWithDetails = async () => {
     a.firstname,
     a.lastname,
     a.email,
-    r.name AS 'type_de_prestation',
-    s.title AS prestation,
+    service.title AS prestation,
+    r.name AS type_de_prestation,
     slot.date,
     slot.start_time,
+    slot.end_time,
     a.is_confirmed
   FROM
     appointment a
   JOIN 
     appointment_service aps ON aps.appointment_id = a.id
   JOIN 
-    service s ON aps.service_id = s.id
+    service ON service.id = aps.service_id
   JOIN 
     slot ON slot.appointment_id = a.id
   JOIN 
-    rate r ON r.id = s.rate_id
+    rate r ON r.id = service.rate_id
   `;
 
   return new Promise((resolve, reject) => {
@@ -200,6 +201,51 @@ const getgroupedAppointments = async () => {
   return groupedAppointments;
 };
 
+const deleteAppointmentById = (appointmentId) => {
+  const query = "DELETE FROM appointment WHERE id = ?";
+
+  return new Promise((resolve, reject) => {
+    db.query(query, [appointmentId], (error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result.affectedRows);
+      }
+    });
+  });
+};
+
+const deleteAppointmentServices = (appointmentId) => {
+  const query = "DELETE FROM appointment_service WHERE appointment_id = ?";
+
+  return new Promise((resolve, reject) => {
+    db.query(query, [appointmentId], (error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
+const addAppointmentServices = (appointmentId, serviceIds) => {
+  const query =
+    "INSERT INTO appointment_service (appointment_id, service_id) VALUES ?";
+
+  const values = serviceIds.map((serviceId) => [appointmentId, serviceId]);
+
+  return new Promise((resolve, reject) => {
+    db.query(query, [values], (error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result);
+      }
+    });
+  });
+};
+
 module.exports = {
   addAppointment,
   getAppointments,
@@ -210,4 +256,7 @@ module.exports = {
   getAppointmentById,
   getAppointmentWithDetailsById,
   getgroupedAppointments,
+  deleteAppointmentById,
+  deleteAppointmentServices,
+  addAppointmentServices,
 };

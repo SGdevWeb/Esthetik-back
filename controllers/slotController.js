@@ -1,4 +1,5 @@
 const slotService = require("../services/slotService");
+const appointmentService = require("../services/appointmentService");
 
 const getSlots = async (req, res) => {
   try {
@@ -98,16 +99,34 @@ const deleteSlot = async (req, res) => {
       return res.status(400).json({ error: "ID du créneau manquant" });
     }
 
-    const result = await slotService.deleteSlotById(slotId);
-
-    if (result === 0) {
+    const slot = await slotService.getSlotById(slotId);
+    if (!slot) {
       return res.status(404).json({ error: "Créneau non trouvé" });
     }
 
-    res.status(200).json({ message: "Créneau supprimé avec succès" });
+    if (slot.appointment_id) {
+      const deleteAppointmentResult =
+        await appointmentService.deleteAppointmentById(slot.appointment_id);
+      if (!deleteAppointmentResult) {
+        return res
+          .status(500)
+          .json({ error: "Erreur lors de la suppression du rendez-vous" });
+      }
+    }
+
+    const deleteSlotResult = await slotService.deleteSlotById(slotId);
+    if (deleteSlotResult === 0) {
+      return res
+        .status(404)
+        .json({ error: "Erreur lors de la suppression du créneau" });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Créneau et rendez-vous lié supprimés avec succès" });
   } catch (error) {
-    console.error("Erreur lors de la suppression du créneau : ", error);
-    res.status(500).json({ error: "Erreur lors de la suppression du créneau" });
+    console.error("Erreur lors de la suppression : ", error);
+    res.status(500).json({ error: "Erreur lors de la suppression" });
   }
 };
 

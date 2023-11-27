@@ -2,8 +2,8 @@ const serviceService = require("../services/serviceService");
 
 const getServices = async (req, res) => {
   try {
-    const rates = await serviceService.getServices();
-    res.json(rates);
+    const services = await serviceService.getServices();
+    res.json(services);
   } catch (error) {
     res
       .status(500)
@@ -14,8 +14,8 @@ const getServices = async (req, res) => {
 const getServicesByRate = async (req, res) => {
   const rateId = req.params.rateId;
   try {
-    const rates = await serviceService.getServicesByRate(rateId);
-    res.json(rates);
+    const services = await serviceService.getServicesByRate(rateId);
+    res.json(services);
   } catch (error) {
     res
       .status(500)
@@ -25,8 +25,9 @@ const getServicesByRate = async (req, res) => {
 
 const getServicesWithRates = async (req, res) => {
   try {
-    const rates = await serviceService.getServicesWithRates();
-    res.json(rates);
+    const services = await serviceService.getServicesWithRates();
+    console.log(services);
+    res.json(services);
   } catch (error) {
     res
       .status(500)

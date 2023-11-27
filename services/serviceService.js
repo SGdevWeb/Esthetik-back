@@ -30,7 +30,12 @@ const getServicesByRate = async (rateId) => {
 
 const getServicesWithRates = () => {
   const query = `
-        SELECT r.id AS rate_id, r.name AS rate_name, s.id AS service_id, s.title AS service_title, s.price AS service_price
+        SELECT
+          r.id AS rate_id,
+          r.name AS rate_name,
+          s.id AS service_id,
+          s.title AS service_title,
+          s.price AS service_price
         FROM rate r
         JOIN service s ON r.id = s.rate_id
     `;

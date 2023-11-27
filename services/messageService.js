@@ -8,21 +8,22 @@ const createUserMessage = (
   servicesContent
 ) => {
   const userMessage = `
-    Bonjour ${firstName} ${lastName},
+    <p>Bonjour ${firstName} ${lastName},</p>
 
-    Votre réservation pour le ${formatDate(
+    <p>Votre réservation pour le ${formatDate(
       selectedDate,
       slotDetails.start_time
-    )} a bien été prise en compte.
+    )} a bien été prise en compte.</p>
 
-    Prestations réservées : 
-    ${servicesContent}
+    <p>Prestations réservées :</p> 
+    <p>${servicesContent}</p>
 
-    Vous recevrez un mail de confirmation très prochainement.
+    <p>Vous recevrez un mail de confirmation très prochainement.</p>
 
-    Merci pour votre confiance.
+    
+    <p>Merci de votre confiance.</p>
 
-    Eclat de beauté by virginie
+    <p>Eclat de beauté by virginie</p>
     `;
 
   return userMessage;

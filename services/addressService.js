@@ -19,7 +19,6 @@ const getAutocompleteSuggestions = async (query) => {
     )} Nord Hauts-de-France`;
 
     const response = await axios.get(url);
-    console.log(formatAddress(response.data));
     return formatAddress(response.data);
   } catch (error) {
     console.error(

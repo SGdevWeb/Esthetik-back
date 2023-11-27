@@ -18,5 +18,15 @@ router.post(
   auth,
   appointmentController.confirmAppointment
 );
+router.delete(
+  "/appointments/:appointmentId/services",
+  auth,
+  appointmentController.deleteAppointmentServices
+);
+router.post(
+  "/appointments/:appointmentId/services",
+  auth,
+  appointmentController.addAppointmentServices
+);
 
 module.exports = router;

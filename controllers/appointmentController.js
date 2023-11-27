@@ -90,10 +90,37 @@ const getgroupedAppointments = async (req, res) => {
   }
 };
 
+const deleteAppointmentServices = async (req, res) => {
+  try {
+    const appointmentId = req.params.appointmentId;
+    await appointmentService.deleteAppointmentServices(appointmentId);
+    res.status(200).json({
+      message: "Les services du rendez-vous ont été supprimés avec succès.",
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const addAppointmentServices = async (req, res) => {
+  try {
+    const appointmentId = req.params.appointmentId;
+    const services = req.body.services;
+    await appointmentService.addAppointmentServices(appointmentId, services);
+    res.status(200).json({
+      message: "Les services ont été ajoutés au rendez-vous avec succès.",
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createAppointment,
   getAppointments,
   getAppointmentsWithDetails,
   confirmAppointment,
   getgroupedAppointments,
+  deleteAppointmentServices,
+  addAppointmentServices,
 };
