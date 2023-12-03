@@ -231,9 +231,14 @@ const deleteAppointmentServices = (appointmentId) => {
 
 const addAppointmentServices = (appointmentId, serviceIds) => {
   const query =
-    "INSERT INTO appointment_service (appointment_id, service_id) VALUES ?";
+    "INSERT INTO appointment_service (appointment_id, service_id, instance_id) VALUES ?";
 
-  const values = serviceIds.map((serviceId) => [appointmentId, serviceId]);
+  let instanceCounter = 1;
+  const values = serviceIds.map((serviceId) => [
+    appointmentId,
+    serviceId,
+    instanceCounter++,
+  ]);
 
   return new Promise((resolve, reject) => {
     db.query(query, [values], (error, result) => {
