@@ -105,6 +105,8 @@ const deleteSlot = async (req, res) => {
     }
 
     if (slot.appointment_id) {
+      await appointmentService.deleteAppointmentServices(slot.appointment_id);
+
       const deleteAppointmentResult =
         await appointmentService.deleteAppointmentById(slot.appointment_id);
       if (!deleteAppointmentResult) {

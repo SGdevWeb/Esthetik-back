@@ -2,11 +2,11 @@ const axios = require("axios");
 
 const formatAddress = (data) => {
   return data.features.map((item) => {
-    const { housenumber, street, postcode, city, osm_id } = item.properties;
-    const address = `${housenumber || ""} ${street || ""}, ${postcode || ""} ${
-      city || ""
-    }`.trim();
-    return { address, osm_id };
+    const { housenumber, street, postcode, city, id } = item.properties;
+    const address = `${housenumber ? housenumber + " " : ""}${street || ""}, ${
+      postcode || ""
+    } ${city || ""}`.trim();
+    return { address, osm_id: id };
   });
 };
 
@@ -14,15 +14,16 @@ const getAutocompleteSuggestions = async (query) => {
   if (!query) return [];
 
   try {
-    const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(
+    const url = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(
       query
-    )} Nord Hauts-de-France`;
+    )}&limit=15`;
 
     const response = await axios.get(url);
+
     return formatAddress(response.data);
   } catch (error) {
     console.error(
-      "Erreur lors de la récupération des suggestions d'adresse:",
+      "Erreur lors de la récupération des suggestions d'adresse : ",
       error
     );
     throw error;
