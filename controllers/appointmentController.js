@@ -4,8 +4,15 @@ const slotService = require("../services/slotService");
 const appointmentService = require("../services/appointmentService");
 
 const createAppointment = async (req, res) => {
-  const { firstName, lastName, email, selectedDate, selectedSlot, services } =
-    req.body;
+  const {
+    firstName,
+    lastName,
+    email,
+    selectedDate,
+    selectedSlot,
+    services,
+    prestations,
+  } = req.body;
 
   try {
     const { userMessage, adminMessage, appointmentId } =
@@ -15,7 +22,7 @@ const createAppointment = async (req, res) => {
         email,
         selectedDate,
         selectedSlot,
-        services
+        prestations
       );
 
     await appointmentService.insertAppointmentServices(appointmentId, services);
@@ -27,7 +34,7 @@ const createAppointment = async (req, res) => {
     );
 
     await emailService.sendEmail(
-      "gustin.samuel@gmail.com",
+      "contact@xn--clatdebeaut-99al.fr",
       "Félicitation ! Vous avez un nouveau rendez-vous",
       adminMessage
     );

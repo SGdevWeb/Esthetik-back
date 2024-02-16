@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+require("dotenv").config();
 
 const transporter = nodemailer.createTransport({
   host: "ssl0.ovh.net",
@@ -6,8 +7,8 @@ const transporter = nodemailer.createTransport({
   secure: false,
   requireTLS: true,
   auth: {
-    user: "contact@xn--clatdebeaut-99al.fr",
-    pass: "Vv030687vV",
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS,
   },
 });
 

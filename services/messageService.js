@@ -5,7 +5,7 @@ const createUserMessage = (
   lastName,
   selectedDate,
   slotDetails,
-  servicesContent
+  prestations
 ) => {
   const userMessage = `
     <p>Bonjour ${firstName} ${lastName},</p>
@@ -15,8 +15,14 @@ const createUserMessage = (
       slotDetails.start_time
     )} a bien été prise en compte.</p>
 
-    <p>Prestations réservées :</p> 
-    <p>${servicesContent}</p>
+    <p>Prestations réservées :<br> 
+    ${prestations
+      .map(
+        (prestation) => `
+        \t - ${prestation}`
+      )
+      .join("<br>")}
+    </p>
 
     <p>Vous recevrez un mail de confirmation très prochainement.</p>
 
@@ -34,7 +40,7 @@ const createAdminMessage = (
   lastName,
   selectedDate,
   slotDetails,
-  servicesContent
+  prestations
 ) => {
   const dashboardLink = "http://éclatdebeauté.fr/admin";
 
@@ -46,8 +52,14 @@ const createAdminMessage = (
     slotDetails.start_time
   )} , pour ${firstName} ${lastName}.</p>
 
-  <p>Prestation(s) à réaliser :</p> 
-  <p>${servicesContent}</p>
+  <p>Prestation(s) à réaliser :<br> 
+  ${prestations
+    .map(
+      (prestation) => `
+      \t - ${prestation}`
+    )
+    .join("<br>")}
+  </p> 
 
   <p>Merci de confirmer celui-ci rapidement en vous <a href="${dashboardLink}">connectant sur votre dashboard</a>.</p>
   `;
@@ -71,7 +83,7 @@ const createConfirmMessage = (
     ${prestations
       .map(
         (prestation) => `
-        - ${prestation.type} : ${prestation.prestation}`
+        \t - ${prestation.type} : ${prestation.prestation}`
       )
       .join("<br>")}
   </p>

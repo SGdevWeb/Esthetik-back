@@ -10,7 +10,7 @@ module.exports = {
     email,
     selectedDate,
     selectedSlot,
-    services
+    prestations
   ) {
     // Vérifier la disponibilité du créneau
     const slotDetails = await slotService.getSlotById(selectedSlot);
@@ -21,33 +21,20 @@ module.exports = {
       throw new Error("Ce créneau est déjà réservé.");
     }
 
-    // Récupérer les détails des services
-    const servicesDetails = await Promise.all(
-      services.map(async (service) => {
-        return await serviceService.getServiceById(service.serviceId);
-      })
-    );
-
-    const servicesContent = servicesDetails
-      .map((serviceDetail) => {
-        return `${serviceDetail.title} -> ${serviceDetail.price}`;
-      })
-      .join("\n");
-
     // Créer les messages pour l'utilisateur et l'administrateur
     const userMessage = createUserMessage(
       firstName,
       lastName,
       selectedDate,
       slotDetails,
-      servicesContent
+      prestations
     );
     const adminMessage = createAdminMessage(
       firstName,
       lastName,
       selectedDate,
       slotDetails,
-      servicesContent
+      prestations
     );
 
     // Ajouter le rendez-vous
