@@ -64,4 +64,7 @@ app.use("/api", appointmentRoutes);
 const addressRoutes = require("./routes/addressRoutes");
 app.use("/api", addressRoutes);
 
+const contactRoutes = require("./routes/contactRoutes");
+app.use("/api", contactRoutes);
+
 module.exports = app;

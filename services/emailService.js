@@ -12,13 +12,14 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-exports.sendEmail = async (to, subject, html, text) => {
+exports.sendEmail = async (to, subject, html, text, replyTo) => {
   const mailOptions = {
     from: '"Eclat de beauté" <contact@xn--clatdebeaut-99al.fr>',
     to,
     subject,
     text,
     html,
+    replyTo,
   };
 
   return transporter.sendMail(mailOptions);

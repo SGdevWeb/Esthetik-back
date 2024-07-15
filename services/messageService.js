@@ -96,8 +96,21 @@ const createConfirmMessage = (
   return confirmMessage;
 };
 
+const createContactMessage = (firstName, lastName, message) => {
+  const contactMessage = `
+  <p>Bonjour Virginie,</p>
+
+  <p>Vous avez un nouveau message de ${firstName} ${lastName}.</p>
+
+  <p>${message}</p>
+  `;
+
+  return contactMessage;
+};
+
 module.exports = {
   createUserMessage,
   createAdminMessage,
   createConfirmMessage,
+  createContactMessage,
 };
