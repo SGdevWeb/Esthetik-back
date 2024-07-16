@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { ValidationError, AddressServiceError } = require("./errorService");
 
 const formatAddress = (data) => {
   return data.features.map((item) => {
@@ -11,7 +12,9 @@ const formatAddress = (data) => {
 };
 
 const getAutocompleteSuggestions = async (query) => {
-  if (!query) return [];
+  if (!query) {
+    throw new ValidationError("Un paramètre de requête est nécessaire");
+  }
 
   try {
     const url = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(
@@ -26,7 +29,9 @@ const getAutocompleteSuggestions = async (query) => {
       "Erreur lors de la récupération des suggestions d'adresse : ",
       error
     );
-    throw error;
+    throw new AddressServiceError(
+      "Échec de l'extraction des suggestions d'adresses"
+    );
   }
 };
 

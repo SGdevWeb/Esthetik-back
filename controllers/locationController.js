@@ -1,3 +1,4 @@
+const { QueryError } = require("../services/errorService");
 const locationService = require("../services/locationService");
 
 const getLocations = async (req, res) => {
@@ -5,9 +6,13 @@ const getLocations = async (req, res) => {
     const locations = await locationService.getLocations();
     res.json(locations);
   } catch (error) {
-    res.status(500).json({
-      error: "Erreur lors de la récupération du secteur géographique",
-    });
+    console.error("Erreur lors de la récupération des villes :", error);
+    if (error instanceof QueryError) {
+      return res.status(500).json({ message: error.message });
+    }
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des villes." });
   }
 };
 
@@ -20,58 +25,56 @@ const createLocation = async (req, res) => {
     const newLocation = await locationService.createLocation(name);
     return res.status(201).json(newLocation);
   } catch (error) {
+    console.error("Erreur lors de la création de la ville :", error);
+    if (error instanceof QueryError) {
+      return res.status(500).json({ message: error.message });
+    }
     res
       .status(500)
-      .json({ error: "Erreur lors de la création d'une nouvelle ville" });
+      .json({ message: "Erreur lors de la création de la ville." });
   }
 };
 
 const deleteLocation = async (req, res) => {
+  const locationId = req.params.id;
   try {
-    const locationId = req.params.id;
-
-    if (!locationId) {
-      return res.status(400).json({ error: "ID de la ville manquant" });
+    const rowsAffected = await locationService.deleteLocationById(locationId);
+    if (rowsAffected === 0) {
+      return res.status(404).json({ message: "ville non trouvée." });
     }
-
-    const result = await locationService.deleteLocationById(locationId);
-
-    if (result === 0) {
-      return res.status(404).json({ error: "Ville non trouvée" });
-    }
-
-    res.status(200).json({ message: "Ville supprimée avec succès" });
+    res.status(200).json({ message: "ville supprimée avec succès." });
   } catch (error) {
+    console.error("Erreur lors de la suppression de la ville :", error);
+    if (error instanceof QueryError) {
+      return res.status(500).json({ message: error.message });
+    }
     res
       .status(500)
-      .json({ error: "Erreur lors de la suppression de la ville : ", error });
+      .json({ message: "Erreur lors de la suppression de la ville." });
   }
 };
 
 const updateLocation = async (req, res) => {
+  const locationId = req.params.id;
+  const updatedLocation = req.body;
+
   try {
-    const locationId = req.params.id;
-    const updatedLocation = req.body;
-
-    if (!locationId) {
-      return res.status(400).json({ error: "Id de la ville manquant" });
-    }
-
-    const result = await locationService.updateLocationById(
+    const rowsAffected = await locationService.updateLocationById(
       locationId,
       updatedLocation
     );
-
-    if (result === 0) {
-      return res.status(404).json({ error: "Ville non trouvé" });
+    if (rowsAffected === 0) {
+      return res.status(404).json({ message: "ville non trouvée." });
     }
-
-    res.status(200).json({ message: "Ville mise à jour avec succès" });
+    res.status(200).json({ message: "ville mise à jour avec succès." });
   } catch (error) {
-    console.log("Erreur lors de la mise à jour de la ville : ", error);
+    console.error("Erreur lors de la mise à jour de l'ville :", error);
+    if (error instanceof QueryError) {
+      return res.status(500).json({ message: error.message });
+    }
     res
       .status(500)
-      .json({ error: "Erreur lors de la mise à jour de la ville" });
+      .json({ message: "Erreur lors de la mise à jour de la ville." });
   }
 };
 

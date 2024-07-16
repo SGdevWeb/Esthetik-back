@@ -1,5 +1,6 @@
 const db = require("../db/dbConfig");
 const emailService = require("./emailService");
+const { QueryError } = require("./errorService");
 const messageService = require("./messageService");
 
 const addAppointment = async (firstname, lastname, email) => {
@@ -9,7 +10,11 @@ const addAppointment = async (firstname, lastname, email) => {
   return new Promise((resolve, reject) => {
     db.query(query, [firstname, lastname, email], (error, result) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de l'ajout du rendez-vous : ${error.message}`
+          )
+        );
       } else {
         resolve(result.insertId); // Renvoie l'id de l'appointment crée
       }
@@ -18,24 +23,30 @@ const addAppointment = async (firstname, lastname, email) => {
 };
 
 const confirmAppointment = async (appointmentId, appointment) => {
-  // Confirmation du rdv dans la bdd
-  await updateAppointmentToConfirmed(appointmentId);
+  try {
+    // Confirmation du rdv dans la bdd
+    await updateAppointmentToConfirmed(appointmentId);
 
-  // Envoie d'un email de confirmation au client
-  const { firstname, lastname, email, date, start_time, prestations } =
-    appointment;
-  const message = messageService.createConfirmMessage(
-    firstname,
-    lastname,
-    date,
-    start_time,
-    prestations
-  );
-  await emailService.sendEmail(
-    email,
-    "Confirmation de votre rendez-vous",
-    message
-  );
+    // Envoie d'un email de confirmation au client
+    const { firstname, lastname, email, date, start_time, prestations } =
+      appointment;
+
+    const message = messageService.createConfirmMessage(
+      firstname,
+      lastname,
+      date,
+      start_time,
+      prestations
+    );
+
+    await emailService.sendEmail(
+      email,
+      "Confirmation de votre rendez-vous",
+      message
+    );
+  } catch (error) {
+    throw error;
+  }
 };
 
 const updateAppointmentToConfirmed = (appointmentId) => {
@@ -44,7 +55,11 @@ const updateAppointmentToConfirmed = (appointmentId) => {
   return new Promise((resolve, reject) => {
     db.query(query, [appointmentId], (error, results) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la mise à jour du rendez-vous : ${error.message}`
+          )
+        );
       } else {
         resolve(results);
       }
@@ -59,7 +74,11 @@ const insertAppointmentServices = async (appointmentId, services) => {
         "INSERT INTO appointment_service(appointment_id, service_id) VALUES (?, ?)";
       db.query(query, [appointmentId, service.serviceId], (error, results) => {
         if (error) {
-          reject(error);
+          reject(
+            new QueryError(
+              `Erreur lors de l'insertion des services du rendez-vous : ${error.message}`
+            )
+          );
         } else {
           resolve(results);
         }
@@ -76,7 +95,11 @@ const getAppointments = async () => {
   return new Promise((resolve, reject) => {
     db.query(query, (error, results) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la récupération des rendez-vous : ${error.message}`
+          )
+        );
       } else {
         resolve(results);
       }
@@ -112,7 +135,11 @@ const getAppointmentsWithDetails = async () => {
   return new Promise((resolve, reject) => {
     db.query(query, (error, results) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la récupération des rendez-vous avec détails : ${error.message}`
+          )
+        );
       } else {
         resolve(results);
       }
@@ -126,7 +153,11 @@ const getAppointmentById = async (appointmentId) => {
   return new Promise((resolve, reject) => {
     db.query(query, [appointmentId], (error, results) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la récupération du rendez-vous : ${error.message}`
+          )
+        );
       } else {
         resolve(results[0]);
       }
@@ -163,7 +194,11 @@ const getAppointmentWithDetailsById = async (appointmentId) => {
   return new Promise((resolve, reject) => {
     db.query(query, [appointmentId], (error, results) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la récupération du rendez-vous avec détails : ${error.message}`
+          )
+        );
       } else {
         resolve(results[0]);
       }
@@ -172,33 +207,39 @@ const getAppointmentWithDetailsById = async (appointmentId) => {
 };
 
 const getgroupedAppointments = async () => {
-  const appointments = await getAppointmentsWithDetails();
-  const groupedAppointments = {};
+  try {
+    const appointments = await getAppointmentsWithDetails();
+    const groupedAppointments = {};
 
-  appointments.forEach((appointment) => {
-    const { appointment_id, prestation, type_de_prestation, ...rest } =
-      appointment;
+    appointments.forEach((appointment) => {
+      const { appointment_id, prestation, type_de_prestation, ...rest } =
+        appointment;
 
-    if (!groupedAppointments[appointment_id]) {
-      groupedAppointments[appointment_id] = {
-        appointment_id,
-        ...rest,
-        prestations: [
-          {
-            type: type_de_prestation,
-            prestation: prestation,
-          },
-        ],
-      };
-    } else {
-      groupedAppointments[appointment_id].prestations.push({
-        type: type_de_prestation,
-        prestation: prestation,
-      });
-    }
-  });
+      if (!groupedAppointments[appointment_id]) {
+        groupedAppointments[appointment_id] = {
+          appointment_id,
+          ...rest,
+          prestations: [
+            {
+              type: type_de_prestation,
+              prestation: prestation,
+            },
+          ],
+        };
+      } else {
+        groupedAppointments[appointment_id].prestations.push({
+          type: type_de_prestation,
+          prestation: prestation,
+        });
+      }
+    });
 
-  return groupedAppointments;
+    return groupedAppointments;
+  } catch (error) {
+    throw new QueryError(
+      `Erreur lors de la récupération des rendez-vous groupés : ${error.message}`
+    );
+  }
 };
 
 const deleteAppointmentById = (appointmentId) => {
@@ -207,7 +248,11 @@ const deleteAppointmentById = (appointmentId) => {
   return new Promise((resolve, reject) => {
     db.query(query, [appointmentId], (error, result) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la suppression du rendez-vous : ${error.message}`
+          )
+        );
       } else {
         resolve(result.affectedRows);
       }
@@ -221,7 +266,11 @@ const deleteAppointmentServices = (appointmentId) => {
   return new Promise((resolve, reject) => {
     db.query(query, [appointmentId], (error, result) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la suppression des services du rendez-vous : ${error.message}`
+          )
+        );
       } else {
         resolve(result);
       }
@@ -243,7 +292,11 @@ const addAppointmentServices = (appointmentId, serviceIds) => {
   return new Promise((resolve, reject) => {
     db.query(query, [values], (error, result) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de l'ajout des services au rendez-vous : ${error.message}`
+          )
+        );
       } else {
         resolve(result);
       }

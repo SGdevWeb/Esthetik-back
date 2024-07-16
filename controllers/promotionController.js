@@ -5,9 +5,13 @@ const getPromotions = async (req, res) => {
     const promotions = await promotionService.getPromotions();
     res.json(promotions);
   } catch (error) {
+    rconsole.error("Erreur lors de la récupération des promotions :", error);
+    if (error instanceof QueryError) {
+      return res.status(500).json({ message: error.message });
+    }
     res
       .status(500)
-      .json({ error: "Erreur lors de la récupération des promotions" });
+      .json({ message: "Erreur lors de la récupération des promotions." });
   }
 };
 

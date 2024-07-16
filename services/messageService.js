@@ -1,4 +1,5 @@
 const { formatDate } = require("./dateService");
+const { MessageCreationError } = require("./errorService");
 
 const createUserMessage = (
   firstName,
@@ -7,7 +8,8 @@ const createUserMessage = (
   slotDetails,
   prestations
 ) => {
-  const userMessage = `
+  try {
+    const userMessage = `
     <p>Bonjour ${firstName} ${lastName},</p>
 
     <p>Votre réservation pour le ${formatDate(
@@ -32,7 +34,16 @@ const createUserMessage = (
     <p>Eclat de beauté by virginie</p>
     `;
 
-  return userMessage;
+    return userMessage;
+  } catch (error) {
+    console.error(
+      "Erreur lors de la création du message utilisateur : ",
+      error
+    );
+    throw new MessageCreationError(
+      "Erreur lors de la création du message utilisateur."
+    );
+  }
 };
 
 const createAdminMessage = (
@@ -42,29 +53,39 @@ const createAdminMessage = (
   slotDetails,
   prestations
 ) => {
-  const dashboardLink = "http://éclatdebeauté.fr/admin";
+  try {
+    const dashboardLink = "http://éclatdebeauté.fr/admin";
 
-  const adminMessage = `
-  <p>Bonjour Virginie,</p>
+    const adminMessage = `
+    <p>Bonjour Virginie,</p>
+  
+    <p>Vous avez une nouvelle demande de rendez-vous pour le ${formatDate(
+      selectedDate,
+      slotDetails.start_time
+    )} , pour ${firstName} ${lastName}.</p>
+  
+    <p>Prestation(s) à réaliser :<br> 
+    ${prestations
+      .map(
+        (prestation) => `
+        \t - ${prestation}`
+      )
+      .join("<br>")}
+    </p> 
+  
+    <p>Merci de confirmer celui-ci rapidement en vous <a href="${dashboardLink}">connectant sur votre dashboard</a>.</p>
+    `;
 
-  <p>Vous avez une nouvelle demande de rendez-vous pour le ${formatDate(
-    selectedDate,
-    slotDetails.start_time
-  )} , pour ${firstName} ${lastName}.</p>
-
-  <p>Prestation(s) à réaliser :<br> 
-  ${prestations
-    .map(
-      (prestation) => `
-      \t - ${prestation}`
-    )
-    .join("<br>")}
-  </p> 
-
-  <p>Merci de confirmer celui-ci rapidement en vous <a href="${dashboardLink}">connectant sur votre dashboard</a>.</p>
-  `;
-
-  return adminMessage;
+    return adminMessage;
+  } catch (error) {
+    console.error(
+      "Erreur lors de la création du message administrateur : ",
+      error
+    );
+    throw new MessageCreationError(
+      "Erreur lors de la création du message administrateur."
+    );
+  }
 };
 
 const createConfirmMessage = (
@@ -74,30 +95,41 @@ const createConfirmMessage = (
   start_time,
   prestations
 ) => {
-  const confirmMessage = `
-  <p>Bonjour ${firstname} ${lastname},</p>
+  try {
+    const confirmMessage = `
+    <p>Bonjour ${firstname} ${lastname},</p>
+  
+    <p>Votre rendez-vous du ${formatDate(date, start_time)} a été confirmé.</p>
+  
+    <p>Prestations demandées :<br> 
+      ${prestations
+        .map(
+          (prestation) => `
+          \t - ${prestation.type} : ${prestation.prestation}`
+        )
+        .join("<br>")}
+    </p>
+  
+    <p>A bientôt</p>
+  
+    <p>Eclat de beauté by Virginie</p>
+    `;
 
-  <p>Votre rendez-vous du ${formatDate(date, start_time)} a été confirmé.</p>
-
-  <p>Prestations demandées :<br> 
-    ${prestations
-      .map(
-        (prestation) => `
-        \t - ${prestation.type} : ${prestation.prestation}`
-      )
-      .join("<br>")}
-  </p>
-
-  <p>A bientôt</p>
-
-  <p>Eclat de beauté by Virginie</p>
-  `;
-
-  return confirmMessage;
+    return confirmMessage;
+  } catch (error) {
+    console.error(
+      "Erreur lors de la création du message de confirmation de rdv : ",
+      error
+    );
+    throw new MessageCreationError(
+      "Erreur lors de la création du message de confirmation de rdv."
+    );
+  }
 };
 
 const createContactMessage = (firstName, lastName, message) => {
-  const contactMessage = `
+  try {
+    const contactMessage = `
   <p>Bonjour Virginie,</p>
 
   <p>Vous avez un nouveau message de ${firstName} ${lastName}.</p>
@@ -105,7 +137,13 @@ const createContactMessage = (firstName, lastName, message) => {
   <p>${message}</p>
   `;
 
-  return contactMessage;
+    return contactMessage;
+  } catch (error) {
+    console.error("Erreur lors de la création du message de contact : ", error);
+    throw new MessageCreationError(
+      "Erreur lors de la création du message de contact."
+    );
+  }
 };
 
 module.exports = {

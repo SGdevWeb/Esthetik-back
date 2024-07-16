@@ -1,4 +1,5 @@
 const db = require("../db/dbConfig");
+const { QueryError } = require("./errorService");
 
 const getRates = () => {
   const query = "SELECT * FROM rate";
@@ -6,7 +7,11 @@ const getRates = () => {
   return new Promise((resolve, reject) => {
     db.query(query, (error, results) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la récupération des tarifs : ${error.message}`
+          )
+        );
       } else {
         resolve(results);
       }
@@ -20,7 +25,11 @@ const getRateIdByName = (rateName) => {
   return new Promise((resolve, reject) => {
     db.query(query, [rateName], (error, results) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la récupération de l'identifiant du tarif : ${error.message}`
+          )
+        );
       } else {
         resolve(results);
       }
@@ -33,7 +42,11 @@ const getRateById = (rateId) => {
   return new Promise((resolve, reject) => {
     db.query(query, [rateId], (error, results) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la récupération du tarif avec l'ID ${rateId} : ${error.message}`
+          )
+        );
       } else {
         resolve(results);
       }

@@ -1,4 +1,5 @@
 const db = require("../db/dbConfig");
+const { QueryError } = require("./errorService");
 
 const getSlots = () => {
   const query = "SELECT * FROM slot ORDER BY date";
@@ -6,7 +7,11 @@ const getSlots = () => {
   return new Promise((resolve, reject) => {
     db.query(query, (error, results) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            "Erreur lors de la récupération des créneaux : ${error.message}"
+          )
+        );
       } else {
         // conversion de la date en chaîne de caractères
         results.forEach((row) => {
@@ -24,7 +29,11 @@ const getSlotById = (slotId) => {
   return new Promise((resolve, reject) => {
     db.query(query, [slotId], (error, results) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la récupération du créneau : ${error.message}`
+          )
+        );
       } else {
         if (results.length === 0) {
           resolve(null);
@@ -45,7 +54,11 @@ const getAvailableSlots = () => {
   return new Promise((resolve, reject) => {
     db.query(query, (error, results) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la récupération des créneaux disponibles : ${error.message}`
+          )
+        );
       } else {
         // conversion de la date en chaîne de caractères
         results.forEach((row) => {
@@ -78,7 +91,11 @@ const getSlotsWithDetails = () => {
   return new Promise((resolve, reject) => {
     db.query(query, (error, results) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la récupération des créneaux avec détails : ${error.message}`
+          )
+        );
       } else {
         results.forEach((row) => {
           row.date = row.date.toISOString().split("T")[0];
@@ -119,12 +136,14 @@ const addSlots = (slots) => {
     slot.endTime,
   ]);
 
-  console.log(values);
-
   return new Promise((resolve, reject) => {
     db.query(query, [values], (error, result) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de l'ajout des créneaux : ${error.message}`
+          )
+        );
       } else {
         resolve(result);
       }
@@ -138,7 +157,11 @@ const updateSlotToBooked = (slotId) => {
   return new Promise((resolve, reject) => {
     db.query(query, [slotId], (error, results) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            "Erreur lors de la mise à jour du créneau pour réserver : ${error.message}"
+          )
+        );
       } else {
         resolve(results);
       }
@@ -152,7 +175,11 @@ const updateSlotWithAppointmentId = (slotId, appointmentId) => {
   return new Promise((resolve, reject) => {
     db.query(query, [appointmentId, slotId], (error, result) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            "Erreur lors de la mise à jour du créneau : ${error.message}"
+          )
+        );
       } else {
         resolve(result.affectedRows);
       }
@@ -166,7 +193,11 @@ const deleteSlotById = (slotId) => {
   return new Promise((resolve, reject) => {
     db.query(query, [slotId], (error, result) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la suppression du créneau : ${error.message}`
+          )
+        );
       } else {
         resolve(result.affectedRows);
       }
@@ -183,7 +214,11 @@ const updateSlotById = (slotId, updatedSlot) => {
       [updatedSlot.start_time, updatedSlot.end_time, slotId],
       (error, result) => {
         if (error) {
-          reject(error);
+          reject(
+            new QueryError(
+              `Erreur lors de la mise à jour du créneau : ${error.message}`
+            )
+          );
         } else {
           resolve(result.affectedRows);
         }

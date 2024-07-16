@@ -1,4 +1,5 @@
 const db = require("../db/dbConfig");
+const { QueryError } = require("./errorService");
 
 const getServices = () => {
   const query = "SELECT * FROM service";
@@ -6,7 +7,11 @@ const getServices = () => {
   return new Promise((resolve, reject) => {
     db.query(query, (error, results) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la récupération des prestations : ${error.message}`
+          )
+        );
       } else {
         resolve(results);
       }
@@ -20,7 +25,11 @@ const getServicesByRate = async (rateId) => {
   return new Promise((resolve, reject) => {
     db.query(query, [rateId], (error, results) => {
       if (error) {
-        reject(error);
+        rreject(
+          new QueryError(
+            `Erreur lors de la récupération des prestations par le nom du tarif : ${error.message}`
+          )
+        );
       } else {
         resolve(results);
       }
@@ -43,7 +52,11 @@ const getServicesWithRates = () => {
   return new Promise((resolve, reject) => {
     db.query(query, (error, results) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la récupération des prestations avec les tarifs : ${error.message}`
+          )
+        );
       } else {
         resolve(results);
       }
@@ -57,7 +70,11 @@ const getServiceById = (serviceId) => {
   return new Promise((resolve, reject) => {
     db.query(query, [serviceId], (error, results) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la récupération de la prestation : ${error.message}`
+          )
+        );
       } else {
         if (results.length === 0) {
           resolve(null);

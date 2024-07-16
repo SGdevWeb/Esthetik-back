@@ -11,7 +11,11 @@ const getDiscounts = () => {
   return new Promise((resolve, reject) => {
     db.query(query, (error, results) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la récupération des remises : ${error.message}`
+          )
+        );
       } else {
         resolve(results);
       }

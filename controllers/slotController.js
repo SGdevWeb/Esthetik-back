@@ -6,9 +6,13 @@ const getSlots = async (req, res) => {
     const slots = await slotService.getSlots();
     res.json(slots);
   } catch (error) {
+    console.error("Erreur lors de la récupération des créneaux :", error);
+    if (error instanceof QueryError) {
+      return res.status(500).json({ error: error.message });
+    }
     res
       .status(500)
-      .json({ error: "Erreur lors de la récupération des créneaux" });
+      .json({ error: "Erreur lors de la récupération des créneaux." });
   }
 };
 
@@ -20,9 +24,16 @@ const getAvailableSlots = async (req, res) => {
     }
     res.json(slots);
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Erreur lors de la récupération des créneaux" });
+    console.error(
+      "Erreur lors de la récupération des créneaux disponibles :",
+      error
+    );
+    if (error instanceof QueryError) {
+      return res.status(500).json({ error: error.message });
+    }
+    res.status(500).json({
+      error: "Erreur lors de la récupération des créneaux disponibles.",
+    });
   }
 };
 
@@ -31,14 +42,20 @@ const getSlotsWithDetails = async (req, res) => {
     const slots = await slotService.getSlotsWithDetails();
     res.json(slots);
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Erreur lors de la récupération des créneaux" });
+    console.error(
+      "Erreur lors de la récupération des créneaux avec détails :",
+      error
+    );
+    if (error instanceof QueryError) {
+      return res.status(500).json({ error: error.message });
+    }
+    res.status(500).json({
+      error: "Erreur lors de la récupération des créneaux avec détails.",
+    });
   }
 };
 
 const addSlots = async (req, res) => {
-  console.log(req.body);
   try {
     const slots = req.body;
 
@@ -63,15 +80,17 @@ const addSlots = async (req, res) => {
       .status(201)
       .json({ message: `${result.affectedRows} créneaux ajoutés avec succès` });
   } catch (error) {
-    console.error("Erreur lors de l'ajout des créneaux : ", error);
-    res.status(500).json({ error: "Erreur lors de l'ajout de créneaux" });
+    console.error("Erreur lors de l'ajout des créneaux :", error);
+    if (error instanceof QueryError) {
+      return res.status(500).json({ error: error.message });
+    }
+    res.status(500).json({ error: "Erreur lors de l'ajout des créneaux." });
   }
 };
 
 const getOneSlot = async (req, res) => {
+  const slotId = req.params.id;
   try {
-    const slotId = req.params.id;
-
     if (!slotId) {
       return res.status(400).json({ error: "ID du créneau manquant" });
     }
@@ -84,17 +103,20 @@ const getOneSlot = async (req, res) => {
 
     res.json(slot);
   } catch (error) {
-    console.error("Erreur lors de la récupération du créneau : ", error);
+    console.error("Erreur lors de la récupération du créneau :", error);
+    if (error instanceof QueryError) {
+      return res.status(500).json({ error: error.message });
+    }
     res
       .status(500)
-      .json({ error: "Erreur lors de la récupération du créneau" });
+      .json({ error: "Erreur lors de la récupération du créneau." });
   }
 };
 
 const deleteSlot = async (req, res) => {
-  try {
-    const slotId = req.params.id;
+  const slotId = req.params.id;
 
+  try {
     if (!slotId) {
       return res.status(400).json({ error: "ID du créneau manquant" });
     }
@@ -127,17 +149,21 @@ const deleteSlot = async (req, res) => {
       .status(200)
       .json({ message: "Créneau et rendez-vous lié supprimés avec succès" });
   } catch (error) {
-    console.error("Erreur lors de la suppression : ", error);
-    res.status(500).json({ error: "Erreur lors de la suppression" });
+    console.error("Erreur lors de la suppression du créneau :", error);
+    if (error instanceof QueryError) {
+      return res.status(500).json({ error: error.message });
+    }
+    res
+      .status(500)
+      .json({ error: "Erreur lors de la suppression du créneau." });
   }
 };
 
 const updateSlot = async (req, res) => {
-  try {
-    const slotId = req.params.id;
-    const updatedSlot = req.body;
-    console.log(updatedSlot);
+  const slotId = req.params.id;
+  const updatedSlot = req.body;
 
+  try {
     if (!slotId) {
       return res.status(400).json({ error: "Id du créneau manquant" });
     }
@@ -152,8 +178,13 @@ const updateSlot = async (req, res) => {
 
     res.status(200).json({ message: "Créneau mis à jour avec succès" });
   } catch (error) {
-    console.log("Erreur lors de la mise à jour du créneau : ", error);
-    res.status(500).json({ error: "Erreur lors de la mise à jour du créneau" });
+    console.error("Erreur lors de la mise à jour du créneau :", error);
+    if (error instanceof QueryError) {
+      return res.status(500).json({ error: error.message });
+    }
+    res
+      .status(500)
+      .json({ error: "Erreur lors de la mise à jour du créneau." });
   }
 };
 

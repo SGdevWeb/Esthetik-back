@@ -1,4 +1,5 @@
 const db = require("../db/dbConfig");
+const { AuthenticationError } = require("./errorService");
 
 const getAdministratorByUsername = (username) => {
   const query = "SELECT * FROM administrator WHERE username = ?";
@@ -8,8 +9,13 @@ const getAdministratorByUsername = (username) => {
       if (error) {
         reject(error);
       } else {
-        const result = results[0];
-        resolve(result);
+        const admin = results[0];
+
+        if (!admin) {
+          reject(new AuthenticationError("Utilisateur non trouvé"));
+        }
+
+        resolve(admin);
       }
     });
   });

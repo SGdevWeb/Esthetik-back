@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const { EmailServiceError } = require("./errorService");
 require("dotenv").config();
 
 const transporter = nodemailer.createTransport({
@@ -22,5 +23,11 @@ exports.sendEmail = async (to, subject, html, text, replyTo) => {
     replyTo,
   };
 
-  return transporter.sendMail(mailOptions);
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    return info;
+  } catch (error) {
+    console.error("Erreur lors de l'envoi de l'email");
+    throw new EmailServiceError("Erreur lors de l'envoi de l'e-mail.");
+  }
 };

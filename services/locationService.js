@@ -1,4 +1,5 @@
 const db = require("../db/dbConfig");
+const { QueryError } = require("./errorService");
 
 const getLocations = () => {
   const query = "SELECT * FROM location ORDER BY name";
@@ -6,7 +7,11 @@ const getLocations = () => {
   return new Promise((resolve, reject) => {
     db.query(query, (error, results) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la récupération des emplacements : ${error.message}`
+          )
+        );
       } else {
         const resultsLowercase = results.map((location) => {
           const { name, ...other } = location;
@@ -26,13 +31,21 @@ const createLocation = (newLocation) => {
   return new Promise((resolve, reject) => {
     db.query(query, [newLocation], (error, result) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la création de l'emplacement : ${error.message}`
+          )
+        );
       } else {
         const insertedId = result.insertId;
         const findQuery = "SELECT * FROM location WHERE id = ?";
         db.query(findQuery, [insertedId], (findError, findResult) => {
           if (findError) {
-            reject(findError);
+            reject(
+              new QueryError(
+                `Erreur lors de la récupération de l'emplacement créé : ${findError.message}`
+              )
+            );
           } else {
             resolve(findResult[0]);
           }
@@ -48,7 +61,11 @@ const deleteLocationById = (locationId) => {
   return new Promise((resolve, reject) => {
     db.query(query, [locationId], (error, result) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la suppression de l'emplacement : ${error.message}`
+          )
+        );
       } else {
         resolve(result.affectedRows);
       }
@@ -62,7 +79,11 @@ const updateLocationById = (locationId, updatedLocation) => {
   return new Promise((resolve, reject) => {
     db.query(query, [updatedLocation.name, locationId], (error, result) => {
       if (error) {
-        reject(error);
+        reject(
+          new QueryError(
+            `Erreur lors de la mise à jour de l'emplacement : ${error.message}`
+          )
+        );
       } else {
         resolve(result.affectedRows);
       }
