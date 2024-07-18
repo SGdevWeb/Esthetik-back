@@ -48,7 +48,7 @@ const getRateById = (rateId) => {
           )
         );
       } else {
-        resolve(results);
+        resolve(results.length > 0 ? results[0] : null);
       }
     });
   });
