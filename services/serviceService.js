@@ -2,7 +2,7 @@ const db = require("../db/dbConfig");
 const { QueryError } = require("./errorService");
 
 const getServices = () => {
-  const query = "SELECT * FROM service";
+  const query = "SELECT * FROM service WHERE is_deleted = FALSE";
 
   return new Promise((resolve, reject) => {
     db.query(query, (error, results) => {
@@ -25,7 +25,7 @@ const getServicesByRate = async (rateId) => {
   return new Promise((resolve, reject) => {
     db.query(query, [rateId], (error, results) => {
       if (error) {
-        rreject(
+        reject(
           new QueryError(
             `Erreur lors de la récupération des prestations par le nom du tarif : ${error.message}`
           )
@@ -86,9 +86,65 @@ const getServiceById = (serviceId) => {
   });
 };
 
+const addService = (title, price, rate_id) => {
+  const query = "INSERT INTO service (title, price, rate_id) VALUES (?, ?, ?)";
+  return new Promise((resolve, reject) => {
+    db.query(query, [title, price, rate_id], (error, results) => {
+      if (error) {
+        reject(
+          new QueryError(`Erreur lors de l'ajout du service : ${error.message}`)
+        );
+      } else {
+        const newServiceId = results.insertId;
+        resolve({ id: newServiceId, title, price, rate_id });
+      }
+    });
+  });
+};
+
+const deleteServiceById = (serviceId) => {
+  const query = "DELETE FROM service WHERE id = ?";
+
+  return new Promise((resolve, reject) => {
+    db.query(query, [serviceId], (error, result) => {
+      if (error) {
+        reject(
+          new QueryError(
+            `Erreur lors de la suppression de la prestation : ${error.message}`
+          )
+        );
+      } else {
+        resolve(result.affectedRows);
+      }
+    });
+  });
+};
+
+const updateService = (serviceId, newData) => {
+  const { title, price, rate_id } = newData;
+  const query =
+    "UPDATE service SET title = ?, price = ?, rate_id = ? WHERE id = ?";
+  return new Promise((resolve, reject) => {
+    db.query(query, [title, price, rate_id, serviceId], (error, results) => {
+      if (error) {
+        reject(
+          new QueryError(
+            `Erreur lors de la mise à jour de la prestation avec l'ID ${serviceId} : ${error.message}`
+          )
+        );
+      } else {
+        resolve({ id: serviceId, title, price, rate_id });
+      }
+    });
+  });
+};
+
 module.exports = {
   getServicesWithRates,
   getServices,
   getServicesByRate,
   getServiceById,
+  addService,
+  deleteServiceById,
+  updateService,
 };
