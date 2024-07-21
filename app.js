@@ -67,4 +67,7 @@ app.use("/api", addressRoutes);
 const contactRoutes = require("./routes/contactRoutes");
 app.use("/api", contactRoutes);
 
+const statRoutes = require("./routes/statRoutes");
+app.use("/api/stats", statRoutes);
+
 module.exports = app;
