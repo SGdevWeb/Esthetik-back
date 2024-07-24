@@ -3,22 +3,32 @@ const emailService = require("./emailService");
 const { QueryError } = require("./errorService");
 const messageService = require("./messageService");
 
-const addAppointment = async (firstname, lastname, email) => {
+const addAppointment = async (
+  firstname,
+  lastname,
+  email,
+  phoneNumber,
+  address
+) => {
   const query =
-    "INSERT INTO appointment (firstname, lastname, email) VALUES (?, ?, ?)";
+    "INSERT INTO appointment (firstname, lastname, email, phone_number, address) VALUES (?, ?, ?, ?, ?)";
 
   return new Promise((resolve, reject) => {
-    db.query(query, [firstname, lastname, email], (error, result) => {
-      if (error) {
-        reject(
-          new QueryError(
-            `Erreur lors de l'ajout du rendez-vous : ${error.message}`
-          )
-        );
-      } else {
-        resolve(result.insertId); // Renvoie l'id de l'appointment crée
+    db.query(
+      query,
+      [firstname, lastname, email, phoneNumber, address],
+      (error, result) => {
+        if (error) {
+          reject(
+            new QueryError(
+              `Erreur lors de l'ajout du rendez-vous : ${error.message}`
+            )
+          );
+        } else {
+          resolve(result.insertId); // Renvoie l'id de l'appointment crée
+        }
       }
-    });
+    );
   });
 };
 
@@ -114,6 +124,8 @@ const getAppointmentsWithDetails = async () => {
     a.firstname,
     a.lastname,
     a.email,
+    a.address,
+    a.phone_number,
     service.title AS prestation,
     r.name AS type_de_prestation,
     slot.date,

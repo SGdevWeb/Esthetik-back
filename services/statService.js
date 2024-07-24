@@ -25,6 +25,9 @@ const getDailyVisitors = () => {
           )
         );
       } else {
+        results.forEach((row) => {
+          row.date = format(new Date(row.date), "yyyy-MM-dd");
+        });
         resolve(results);
       }
     });
@@ -118,6 +121,9 @@ const getBounceRate = () => {
           )
         );
       } else {
+        results.forEach((row) => {
+          row.date = format(new Date(row.date), "yyyy-MM-dd");
+        });
         resolve(results);
       }
     });

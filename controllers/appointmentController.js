@@ -6,6 +6,7 @@ const {
   EmailServiceError,
   QueryError,
   MessageCreationError,
+  SlotError,
 } = require("../services/errorService");
 
 const createAppointment = async (req, res) => {
@@ -13,6 +14,8 @@ const createAppointment = async (req, res) => {
     firstName,
     lastName,
     email,
+    phoneNumber,
+    address,
     selectedDate,
     selectedSlot,
     services,
@@ -24,6 +27,8 @@ const createAppointment = async (req, res) => {
       !firstName ||
       !lastName ||
       !email ||
+      !phoneNumber ||
+      !address ||
       !selectedDate ||
       !selectedSlot ||
       !services ||
@@ -39,6 +44,8 @@ const createAppointment = async (req, res) => {
         firstName,
         lastName,
         email,
+        phoneNumber,
+        address,
         selectedDate,
         selectedSlot,
         prestations
@@ -245,11 +252,9 @@ const addAppointmentServices = async (req, res) => {
         message: error.message,
       });
     }
-    res
-      .status(500)
-      .json({
-        message: "Erreur lors de l'ajout des prestations au rendez-vous.",
-      });
+    res.status(500).json({
+      message: "Erreur lors de l'ajout des prestations au rendez-vous.",
+    });
   }
 };
 

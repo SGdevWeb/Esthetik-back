@@ -49,6 +49,8 @@ const createUserMessage = (
 const createAdminMessage = (
   firstName,
   lastName,
+  address,
+  phoneNumber,
   selectedDate,
   slotDetails,
   prestations
@@ -71,7 +73,13 @@ const createAdminMessage = (
         \t - ${prestation}`
       )
       .join("<br>")}
-    </p> 
+    </p>
+
+    <p>Coordonnées :<br>
+    ${address.split(",")[0]}<br>
+    ${address.split(",")[1]}<br>
+    ${phoneNumber}<br>
+    </p>
   
     <p>Merci de confirmer celui-ci rapidement en vous <a href="${dashboardLink}">connectant sur votre dashboard</a>.</p>
     `;

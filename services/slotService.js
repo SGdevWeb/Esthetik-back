@@ -77,6 +77,8 @@ const getSlotsWithDetails = () => {
           appointment.firstname, 
           appointment.lastname, 
           appointment.email,
+          appointment.phone_number,
+          appointment.address,
           appointment.is_confirmed, 
           service.id AS service_id,
           service.title, 

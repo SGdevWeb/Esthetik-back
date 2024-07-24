@@ -1,13 +1,15 @@
 const slotService = require("./slotService");
 const { createUserMessage, createAdminMessage } = require("./messageService");
 const appointmentService = require("./appointmentService");
-const { SlotError } = require("./errorService");
+const { SlotError, MessageCreationError } = require("./errorService");
 
 module.exports = {
   createBooking: async function (
     firstName,
     lastName,
     email,
+    phoneNumber,
+    address,
     selectedDate,
     selectedSlot,
     prestations
@@ -33,6 +35,8 @@ module.exports = {
       const adminMessage = createAdminMessage(
         firstName,
         lastName,
+        address,
+        phoneNumber,
         selectedDate,
         slotDetails,
         prestations
@@ -42,7 +46,9 @@ module.exports = {
       const appointmentId = await appointmentService.addAppointment(
         firstName,
         lastName,
-        email
+        email,
+        phoneNumber,
+        address
       );
 
       return { userMessage, adminMessage, appointmentId };
