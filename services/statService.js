@@ -1,5 +1,6 @@
 const matomoDb = require("../db/matomoDb");
 const { QueryError } = require("./errorService");
+const { format } = require("date-fns");
 
 const getDailyVisitors = () => {
   const query = `
@@ -91,6 +92,9 @@ const getAverageTime = () => {
           )
         );
       } else {
+        results.forEach((row) => {
+          row.date = format(new Date(row.date), "yyyy-MM-dd");
+        });
         resolve(results);
       }
     });
