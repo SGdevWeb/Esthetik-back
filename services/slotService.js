@@ -1,5 +1,6 @@
 const db = require("../db/dbConfig");
 const { QueryError } = require("./errorService");
+const { format } = require("date-fns");
 
 const getSlots = () => {
   const query = "SELECT * FROM slot ORDER BY date";
@@ -15,7 +16,7 @@ const getSlots = () => {
       } else {
         // conversion de la date en chaîne de caractères
         results.forEach((row) => {
-          row.date = row.date.toISOString().split("T")[0];
+          row.date = format(new Date(row.date), "yyyy-MM-dd");
         });
         resolve(results);
       }
@@ -39,7 +40,7 @@ const getSlotById = (slotId) => {
           resolve(null);
         } else {
           // conversion de la date en chaîne de caractères
-          results[0].date = results[0].date.toISOString().split("T")[0];
+          results[0].date = format(new Date(results[0].date), "yyyy-MM-dd");
           resolve(results[0]);
         }
       }
@@ -62,7 +63,7 @@ const getAvailableSlots = () => {
       } else {
         // conversion de la date en chaîne de caractères
         results.forEach((row) => {
-          row.date = row.date.toISOString().split("T")[0];
+          row.date = format(new Date(row.date), "yyyy-MM-dd");
         });
         resolve(results);
       }
@@ -98,7 +99,7 @@ const getSlotsWithDetails = () => {
         );
       } else {
         results.forEach((row) => {
-          row.date = row.date.toISOString().split("T")[0];
+          row.date = format(new Date(row.date), "yyyy-MM-dd");
         });
         resolve(results);
       }
@@ -117,8 +118,8 @@ const addSlots = (slots) => {
     for (let i = startHour; i < endHour; i++) {
       oneHourSlots.push({
         date: slot.date,
-        startTime: `${i}:00`,
-        endTime: `${i + 1}:00`,
+        startTime: `${i.toString().padStart(2, "0")}:00`,
+        endTime: `${(i + 1).toString().padStart(2, "0")}:00`,
       });
     }
     return oneHourSlots;
@@ -130,11 +131,9 @@ const addSlots = (slots) => {
     allOneHourSlots.push(...decomposedSlots);
   });
 
-  const values = allOneHourSlots.map((slot) => [
-    slot.date,
-    slot.startTime,
-    slot.endTime,
-  ]);
+  const values = allOneHourSlots.map((slot) => {
+    return [slot.date, slot.startTime, slot.endTime];
+  });
 
   return new Promise((resolve, reject) => {
     db.query(query, [values], (error, result) => {
