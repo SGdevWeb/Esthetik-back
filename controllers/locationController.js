@@ -64,11 +64,11 @@ const updateLocation = async (req, res) => {
       updatedLocation
     );
     if (rowsAffected === 0) {
-      return res.status(404).json({ message: "ville non trouvée." });
+      return res.status(404).json({ message: "Ville non trouvée." });
     }
-    res.status(200).json({ message: "ville mise à jour avec succès." });
+    res.status(200).json({ message: "Ville mise à jour avec succès." });
   } catch (error) {
-    console.error("Erreur lors de la mise à jour de l'ville :", error);
+    console.error("Erreur lors de la mise à jour de la ville :", error);
     if (error instanceof QueryError) {
       return res.status(500).json({ message: error.message });
     }
