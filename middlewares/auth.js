@@ -10,7 +10,6 @@ module.exports = async (req, res, next) => {
       decodedToken.sub.username
     );
     if (!admin || !admin.is_admin) {
-      console.log("pas admin");
       return res.status(403).json({ message: "Accès refusé" });
     }
     req.auth = {
