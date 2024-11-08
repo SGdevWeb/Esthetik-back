@@ -11,6 +11,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, "../Esthetik-front/build")));
+app.use(express.static(path.join(__dirname, "../uploads")));
 
 const pathsToRedirect = [
   "/prestations",
@@ -69,5 +70,8 @@ app.use("/api", contactRoutes);
 
 const statRoutes = require("./routes/statRoutes");
 app.use("/api/stats", statRoutes);
+
+const fileRoutes = require("./routes/fileRoutes");
+app.use("/api", fileRoutes);
 
 module.exports = app;

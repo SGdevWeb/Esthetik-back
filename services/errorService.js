@@ -47,6 +47,13 @@ class QueryError extends Error {
   }
 }
 
+class UnsupportedFileTypeError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "UnsupportedFileTypeError";
+  }
+}
+
 module.exports = {
   ValidationError,
   EmailServiceError,
@@ -55,4 +62,5 @@ module.exports = {
   SlotError,
   MessageCreationError,
   QueryError,
+  UnsupportedFileTypeError,
 };
