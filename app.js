@@ -1,17 +1,17 @@
 const express = require("express");
-const cors = require("cors");
+const cors = require("./middlewares/corsMiddleware");
 const bodyParser = require("body-parser");
 require("dotenv").config();
 const path = require("path");
 
 const app = express();
 
-app.use(cors());
+app.use(cors);
 
 app.use(bodyParser.json());
 
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use(express.static(path.join(__dirname, "../Esthetik-front/build")));
-app.use(express.static(path.join(__dirname, "../uploads")));
 
 const pathsToRedirect = [
   "/prestations",

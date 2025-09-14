@@ -39,56 +39,26 @@ const limits = {
   fileSize: 10 * 1024 * 1024,
 };
 
-const upload = multer({ storage, fileFilter, limits }).fields([
-  { name: "image", maxCount: 1 },
-  { name: "title" },
-  { name: "content" },
-  { name: "rateId" },
-  { name: "publicationDate" },
-  { name: "author" },
-  { name: "imageCategory" },
-]);
+const upload = multer({ storage, fileFilter, limits }).single("image");
 
 const uploadMiddleware = async (req, res, next) => {
-  const handleOldFile = () => {
-    const oldFileName = req.body.oldImage;
-    if (oldFileName) {
-      const oldFilePath = path.join(__dirname, "../uploads", oldFileName);
-      if (fs.existsSync(oldFilePath)) {
-        fs.unlink(oldFilePath, (err) => {
-          if (err) {
-            console.error(
-              "Erreur lors de la suppression de l'ancienne image :",
-              err
-            );
-          } else {
-            console.log("Ancien fichier supprimé :", oldFilePath);
-          }
-        });
-      }
+  upload(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({ message: `Erreur Multer: ${err.message}` });
+    } else if (err instanceof UnsupportedFileTypeError) {
+      return res.status(400).json({ message: err.message });
+    } else if (err) {
+      return res.status(500).json({ message: err.message });
     }
-  };
 
-  try {
-    await new Promise((resolve, reject) => {
-      upload(req, res, (err) => {
-        if (err instanceof multer.MulterError) {
-          reject({ status: 400, message: `Erreur Multer: ${err.message}` });
-        } else if (err instanceof UnsupportedFileTypeError) {
-          reject({ status: 400, message: err.message });
-        } else if (err) {
-          reject({ status: 500, message: err.message });
-        } else {
-          resolve();
-        }
-      });
-    });
+    // suppression de l'ancien fichier si nécessaire
+    if (req.body.oldImage) {
+      const oldFilePath = path.join(__dirname, "../uploads", req.body.oldImage);
+      if (fs.existsSync(oldFilePath)) fs.unlinkSync(oldFilePath);
+    }
 
-    handleOldFile();
     next();
-  } catch (error) {
-    return res.status(error.status || 500).json({ message: error.message });
-  }
+  });
 };
 
 module.exports = uploadMiddleware;

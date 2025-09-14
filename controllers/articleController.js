@@ -51,7 +51,7 @@ const createArticleController = async (req, res) => {
       throw new ValidationError("Le champ contenu est requis");
     }
 
-    const image = req.files.image ? req.files.image[0].filename : null;
+    const image = req.file ? req.file.filename : null;
 
     const articlecreated = await articleService.createArticle(
       title,
@@ -100,7 +100,7 @@ const deleteArticle = async (req, res) => {
 const updateArticleController = async (req, res) => {
   const articleId = req.params.id;
   const { title, content, rateId } = req.body;
-  const image = req.files.image && req.files.image[0].filename;
+  const image = req.file.image && req.file.filename;
 
   try {
     const articleUpdated = await articleService.updateArticleById(
